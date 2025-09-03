@@ -70,6 +70,19 @@ services:
       - rabbitmq
       - mongo
 
+  convertor_service:
+    build: ./services/convertor
+    container_name: convertor_service
+    restart: always
+    ports:
+      - "4000:4000"
+    environment:
+      RABBITMQ_URL: amqp://admin:pass@rabbitmq:5672
+      MONGODB_URL: mongodb://admin:pass@mongo:27017/?authSource=admin
+    depends_on:
+      - rabbitmq
+      - mongo
+
   mongo:
     image: mongo:6.0.3
     container_name: mongo
