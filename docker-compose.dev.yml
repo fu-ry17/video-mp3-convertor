@@ -1,0 +1,64 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: postgres
+    restart: always
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: pass
+      POSTGRES_DB: auth
+    volumes:
+      - data:/var/lib/postgresql/data
+
+  rabbitmq:
+    image: rabbitmq:3.12-management-alpine
+    container_name: rabbitmq
+    restart: always
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: pass
+
+  auth_service:
+    build: ./services/auth
+    container_name: auth_service
+    restart: always
+    ports:
+      - "5000:5000"
+    environment:
+      JWT_SECRET: yuasidjoPSICUAYDSICAWETDUYAGH
+      DATABASE_URL: postgresql+asyncpg://admin:pass@postgres:5432/auth
+      RABBITMQ_URL: amqp://admin:pass@rabbitmq:5672
+    depends_on:
+      - postgres
+      - rabbitmq
+      - gateway_service
+
+  gateway_service:
+    build: ./services/gateway
+    container_name: gateway_service
+    restart: always
+    ports:
+      - "8000:8000"
+    environment:
+      AUTH_URL: http://auth_service:5000
+
+  notification_service:
+    build: ./services/notification
+    container_name: notification_service
+    restart: always
+    ports:
+      - "6000:6000"
+    environment:
+      RABBITMQ_URL: amqp://admin:pass@rabbitmq:5672
+
+volumes:
+  data:
+
+networks:
+  main:
+    driver: bridge
