@@ -4,7 +4,8 @@ from fastapi import FastAPI, Request, status
 from starlette.responses import Response
 
 SERVICES = {
-    "auth": os.getenv("AUTH_URL", "http://localhost:5000")
+    "auth": os.getenv("AUTH_URL", "http://localhost:5000"),
+    "media": os.getenv("MEDIA_URL", "http://localhost:7000")
 }
 
 app = FastAPI(

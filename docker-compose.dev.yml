@@ -46,6 +46,7 @@ services:
       - "8000:8000"
     environment:
       AUTH_URL: http://auth_service:5000
+      MEDIA_URL: http://media_service:7000
 
   notification_service:
     build: ./services/notification
@@ -56,7 +57,49 @@ services:
     environment:
       RABBITMQ_URL: amqp://admin:pass@rabbitmq:5672
 
+  media_service:
+    build: ./services/media
+    container_name: media_service
+    restart: always
+    ports:
+      - "7000:7000"
+    environment:
+      RABBITMQ_URL: amqp://admin:pass@rabbitmq:5672
+      MONGODB_URL: mongodb://admin:pass@mongo:27017/?authSource=admin
+    depends_on:
+      - rabbitmq
+      - mongo
+
+  mongo:
+    image: mongo:6.0.3
+    container_name: mongo
+    restart: always
+    ports:
+      - "27017:27017"
+    environment:
+      ME_CONFIG_MONGODB_SERVER: mongo # connect to the mongo service
+      ME_CONFIG_MONGODB_PORT: 27017
+      ME_CONFIG_MONGODB_ADMINUSERNAME: admin # same as mongo root user
+      ME_CONFIG_MONGODB_ADMINPASSWORD: pass
+      ME_CONFIG_BASICAUTH_USERNAME: admin # optional (UI login for mongo-express)
+      ME_CONFIG_BASICAUTH_PASSWORD: pass
+    volumes:
+      - mongodata:/data/db
+
+  mongo-express:
+    image: mongo-express
+    container_name: mongo-express
+    restart: always
+    ports:
+      - "8081:8081"
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: admin
+      ME_CONFIG_MONGODB_ADMINPASSWORD: pass
+    depends_on:
+      - mongo
+
 volumes:
+  mongodata:
   data:
 
 networks:
