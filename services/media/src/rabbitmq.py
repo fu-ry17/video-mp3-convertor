@@ -1,6 +1,5 @@
 import os
-import aio_pika
-from fastapi.routing import json
+import aio_pika, json
 
 import logging
 

@@ -1,7 +1,6 @@
 import os
-import aio_pika
+import aio_pika, json
 from aio_pika.abc import AbstractIncomingMessage
-from fastapi.routing import json
 
 import logging
 

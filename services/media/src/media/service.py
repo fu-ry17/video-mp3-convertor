@@ -1,6 +1,6 @@
+import logging
 import os, uuid
 from fastapi import HTTPException, UploadFile, status
-from fastapi.applications import logger
 from fastapi.responses import JSONResponse
 import gridfs
 from pymongo import MongoClient
@@ -30,7 +30,7 @@ class MediaService:
             return "file uploaded for processing"
 
         except Exception as e:
-            logger.error(f"Failed to upload file: {e}", exc_info=True)
+            logging.error(f"Failed to upload file: {e}", exc_info=True)
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="An error occured during file upload")
 
 

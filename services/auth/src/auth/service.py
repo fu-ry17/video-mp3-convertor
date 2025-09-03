@@ -50,12 +50,10 @@ class AuthService:
                 access_token = utils.generate_token(user_data, exp=timedelta(hours=1))
                 refresh_token = utils.generate_token(user_data, exp=timedelta(days=2))
 
-                await rabbitmq.send_message('user.login', { 'email': user.email })
-
                 return JSONResponse(
                     content={
                         'access-token': access_token,
-                        'refresg-token': refresh_token
+                        'refresh-token': refresh_token
                     }
                 )
 
