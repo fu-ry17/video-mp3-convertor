@@ -13,7 +13,7 @@ class UserConsumer:
         html = f"""
             <h1 style="color:#4CAF50;">👋 Welcome to Video to MP3 Converter!</h1>
             <p>
-                Hello <strong>{message['username']}</strong>,
+                Hello <strong>{message['email']}</strong>,
             </p>
             <p>
                 We're excited to have you on board. With our service, you can easily convert your favorite videos into high-quality

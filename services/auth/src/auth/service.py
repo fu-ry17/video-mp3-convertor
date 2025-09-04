@@ -46,7 +46,7 @@ class AuthService:
         if user is not None:
             if utils.compare_password(data.password, user.password_hash):
                 # generate tokens
-                user_data = { 'user_id': str(user.id) }
+                user_data = { 'user_id': str(user.id), 'email': user.email }
                 access_token = utils.generate_token(user_data, exp=timedelta(hours=1))
                 refresh_token = utils.generate_token(user_data, exp=timedelta(days=2))
 

@@ -48,7 +48,7 @@ class RabbitMQ:
                 logger.info(f"✅ Acked message from {queue_name}: {payload}")
             except Exception as e:
                 logger.error(f"❌ Error handling message from {queue_name}: {e}")
-                await message.nack(requeue=True)
+                await message.nack(requeue=False, multiple=False)
 
         await queue.consume(_wrapper)
 
