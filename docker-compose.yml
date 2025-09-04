@@ -1,0 +1,73 @@
+services:
+  rabbitmq:
+    image: rabbitmq:3.12-management-alpine
+    container_name: rabbitmq
+    restart: always
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: pass
+
+  auth_service:
+    image: fury17/auth_service:latest
+    container_name: auth_service
+    restart: always
+    ports:
+      - "5000:5000"
+    environment:
+      JWT_SECRET: yuasidjoPSICUAYDSICAWETDUYAGH
+      DATABASE_URL: postgresql+asyncpg://admin:pass@postgres:5432/auth
+      RABBITMQ_URL: amqp://admin:pass@rabbitmq:5672
+    depends_on:
+      - rabbitmq
+      - gateway_service
+
+  gateway_service:
+    image: fury17/gateway_service:latest
+    container_name: gateway_service
+    restart: always
+    ports:
+      - "8000:8000"
+    environment:
+      AUTH_URL: http://auth_service:5000
+      MEDIA_URL: http://media_service:7000
+
+  notification_service:
+    image: fury17/notification_service:latest
+    container_name: notification_service
+    restart: always
+    ports:
+      - "6000:6000"
+    env_file:
+      - ./services/notification/.env
+
+  media_service:
+    image: fury17/media_service:latest
+    container_name: media_service
+    restart: always
+    ports:
+      - "7000:7000"
+    environment:
+      RABBITMQ_URL: amqp://admin:pass@rabbitmq:5672
+      MONGODB_URL: mongodb://admin:pass@mongo:27017/?authSource=admin
+      AUTH_URL: http://auth_service:5000
+    depends_on:
+      - rabbitmq
+  convertor_service:
+    image: fury17/convertor_service:latest
+    container_name: convertor_service
+    restart: always
+    ports:
+      - "4000:4000"
+    environment:
+      RABBITMQ_URL: amqp://admin:pass@rabbitmq:5672
+      MONGODB_URL: mongodb://admin:pass@mongo:27017/?authSource=admin
+    depends_on:
+      - rabbitmq
+
+
+networks:
+  main:
+    driver: bridge

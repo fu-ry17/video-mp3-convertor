@@ -31,7 +31,7 @@ class UserConsumer:
 
         mail_message = create_message(
             body=html,
-            recipients=[message['username']],
+            recipients=[message['email']],
             subject="Welcome to video to mp3 convertor"
         )
 
