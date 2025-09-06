@@ -13,7 +13,7 @@ app = FastAPI(
     docs_url=None,
 )
 
-@app.api_route("/{service}", methods=["GET", "PUT", "POST", "DELETE", "PATCH", "OPTIONS", "HEADER"])
+@app.api_route("/api/{service}", methods=["GET", "PUT", "POST", "DELETE", "PATCH", "OPTIONS", "HEADER"])
 async def proxy_root(service: str, request: Request):
     base = SERVICES.get(service)
     if not base:
@@ -21,7 +21,7 @@ async def proxy_root(service: str, request: Request):
 
     return await _proxy(request, base, "")
 
-@app.api_route("/{service}/{path:path}", methods=["GET", "PUT", "POST", "DELETE", "PATCH", "OPTIONS", "HEADER"])
+@app.api_route("/api/{service}/{path:path}", methods=["GET", "PUT", "POST", "DELETE", "PATCH", "OPTIONS", "HEADER"])
 async def proxy(service: str, path: str, request: Request):
     base = SERVICES.get(service)
     if not base:

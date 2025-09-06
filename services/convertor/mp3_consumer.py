@@ -4,6 +4,7 @@ from bson import ObjectId
 import logging, gridfs, os, subprocess
 import uuid
 from pymongo import MongoClient
+import httpx
 
 from rabbitmq import rabbitmq
 
@@ -16,8 +17,12 @@ mongo_mp3 = MongoClient(os.getenv("MONGODB_URL"))["mp3s"]
 fs_videos = gridfs.GridFS(mongo_video)
 fs_mp3s = gridfs.GridFS(mongo_mp3)
 
+MEDIA_URL = os.getenv("MEDIA_URL")
 
 class Mp3Consumer:
+    def __init__(self):
+        self.client = httpx.AsyncClient()
+
     async def convert_to_mp3(self, message):
         logger.info(f"Convert to mp3 {message}")
 
@@ -41,12 +46,21 @@ class Mp3Consumer:
             with open(output_path, "rb") as f:
                 file_id = fs_mp3s.put(f)
 
+            body = {
+                "username": message['username'],
+                "status": "processed",
+                "mp3_id": str(file_id)
+            }
+
+            await self.client.patch(f"{MEDIA_URL}/user/media/{message['video_id']}", json=body)
+
             # Send RabbitMQ payload
             payload = {
                 "video_id": None,
                 "mp3_id": str(file_id),
                 "username": message['username'],
             }
+
             await rabbitmq.send_message("upload.converted", payload)
 
             logger.info(f"Successfully converted video {video_file._id} → mp3 {file_id}")
@@ -56,6 +70,13 @@ class Mp3Consumer:
 
         except Exception as e:
             logger.error(f"Failed to convert to mp3: {e}", exc_info=True)
+            body = {
+                "username": message['username'],
+                "status": "failed",
+                "mp3_id": None
+            }
+
+            await self.client.patch(f"{MEDIA_URL}/user/media/{message['video_id']}", json=body)
             if base_dir.exists():
                 shutil.rmtree(base_dir, ignore_errors=True)
 

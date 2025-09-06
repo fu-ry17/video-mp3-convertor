@@ -10,6 +10,8 @@ class AuthBearer(HTTPBearer):
 
     async def __call__(self, request: Request):
        creds = await super().__call__(request)
+       if not creds:
+           raise HTTPException(status_code=401, detail="Missing credentials")
        return await self.verify(creds.credentials)
 
     async def verify(self, token):
