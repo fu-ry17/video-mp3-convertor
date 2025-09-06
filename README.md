@@ -113,7 +113,7 @@ video-mp3-convertor/
 
 1. **Clone the repository**
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/fu-ry17/video-mp3-convertor
    cd video-mp3-convertor
    ```
 
