@@ -18,7 +18,7 @@ async def download(fid: str, _: dict = Depends(authBearer)):
 
 @media_router.get("/user/media")
 async def get_user_media(user: dict = Depends(authBearer)):
-    return await media_service.get_user_media(user["id"])
+    return await media_service.get_user_media(user["user_id"])
 
 @media_router.patch("/user/media/{video_id}")
 async def update_user_media(video_id: str, payload: MediaUpdateRequest):
