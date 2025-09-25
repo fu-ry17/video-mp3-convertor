@@ -13,6 +13,40 @@ app = FastAPI(
     docs_url=None,
 )
 
+async def check_service_health(url: str):
+    health_url = f"{url}/health"
+    try:
+        async with httpx.AsyncClient(timeout=3) as client:
+            resp = await client.get(health_url)
+            if resp.status_code == 200:
+                return "up"
+            else:
+                return "down"
+    except Exception:
+        return "down"
+
+
+@app.get("/health")
+async def health():
+    return { "status": "ok" }
+
+@app.get("/")
+async def root():
+    services_status = {}
+    for service, url in SERVICES.items():
+        status = await check_service_health(url)
+        services_status[service] = {
+            "url": url,
+            "docs": f"{url}/docs",
+            "status": status
+        }
+
+    return {
+        "message": "Welcome to Video MP3 Convertor Services",
+        "services": services_status
+    }
+
+
 @app.api_route("/api/{service}", methods=["GET", "PUT", "POST", "DELETE", "PATCH", "OPTIONS", "HEADER"])
 async def proxy_root(service: str, request: Request):
     base = SERVICES.get(service)
