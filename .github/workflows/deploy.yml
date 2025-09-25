@@ -22,13 +22,14 @@ jobs:
           # convert to JSON array for matrix
           json_matrix="{\"service\":[\"$(echo $services | sed 's/ /\",\"/g')\"]}"
           echo "Matrix: $json_matrix"
-          echo "::set-output name=matrix::$json_matrix"
+          # write to environment file for outputs
+          echo "matrix=$json_matrix" >> $GITHUB_OUTPUT
 
   build-and-push:
     needs: generate-matrix
     runs-on: ubuntu-latest
     strategy:
-      matrix: ${{fromJSON(needs.generate-matrix.outputs.matrix)}}
+      matrix: ${{ fromJSON(needs.generate-matrix.outputs.matrix) }}
 
     steps:
       - name: Checkout repo
@@ -53,4 +54,12 @@ jobs:
           file: ./services/${{ matrix.service }}/Dockerfile
           push: true
           tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/mp3_${{ matrix.service }}:latest
             ${{ secrets.DOCKERHUB_USERNAME }}/mp3_${{ matrix.service }}:${{ github.sha }}
+
+      # - name: Trigger Render Deploy
+      #   run: |
+      #     curl -X POST "https://api.render.com/v1/services/srv-ccq69osgqg4d183rgocg/deploys" \
+      #          -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}" \
+      #          -H "Content-Type: application/json" \
+      #          -d '{}'

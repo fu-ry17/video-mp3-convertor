@@ -5,6 +5,8 @@ from sqlmodel import Column, Field, SQLModel
 from datetime import datetime
 
 class User(SQLModel, table=True):
+    __tablename__ = "mp3_convertor_users"
+
     id: uuid.UUID = Field(
         sa_column=Column(
             pg.UUID,
