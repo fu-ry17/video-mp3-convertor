@@ -1,12 +1,16 @@
 from sqlmodel.ext.asyncio.session import AsyncSession
 from sqlmodel import SQLModel, create_engine
+from sqlalchemy.pool import NullPool
 from sqlalchemy.ext.asyncio import AsyncEngine, async_sessionmaker
 
 from src.settings import settings
 
 async_engine = AsyncEngine(
     create_engine(
-        url=settings.DATABASE_URL
+        url=settings.DATABASE_URL,
+        echo=False,
+        pool_pre_ping=True,
+        poolclass=NullPool,
     )
 )
 
