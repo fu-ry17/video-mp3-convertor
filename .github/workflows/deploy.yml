@@ -55,11 +55,12 @@ jobs:
           push: true
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME }}/mp3_${{ matrix.service }}:latest
-            ${{ secrets.DOCKERHUB_USERNAME }}/mp3_${{ matrix.service }}:${{ github.sha }}
 
-      - name: Trigger Render Deploy
-        run: |
-          curl -X POST "https://api.render.com/v1/services/srv-ccq69osgqg4d183rgocg/deploys" \
-               -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}" \
-               -H "Content-Type: application/json" \
-               -d '{ }'
+          # ${{ secrets.DOCKERHUB_USERNAME }}/mp3_${{ matrix.service }}:${{ github.sha }}
+
+      # - name: Trigger Render Deploy
+      #   run: |
+      #     curl -X POST "https://api.render.com/v1/services/srv-ccq69osgqg4d183rgocg/deploys" \
+      #          -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}" \
+      #          -H "Content-Type: application/json" \
+      #          -d '{ }'
