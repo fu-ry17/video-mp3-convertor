@@ -38,6 +38,7 @@ async def root():
         services_status[service] = {
             "url": url,
             "docs": f"{url}/docs",
+            "prefix": f"/api/{service}/:paths",
             "status": status
         }
 

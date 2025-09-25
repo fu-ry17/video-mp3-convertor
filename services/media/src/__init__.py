@@ -17,5 +17,9 @@ app = FastAPI(
     lifespan=life_span
 )
 
+@app.get("/health")
+async def health():
+    return { "status": "ok" }
+
 
 app.include_router(media_router, tags=["media"])
