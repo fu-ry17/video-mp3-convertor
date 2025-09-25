@@ -1,20 +1,16 @@
-import { useEffect } from "react";
-import axios from "axios";
+import { Route, Routes } from "react-router-dom";
+import SignIn from "./pages/sign-in";
+import SignUp from "./pages/sign-up";
 
 const App = () => {
-  useEffect(() => {
-    console.log("App mounted");
-    const testAuth = async () => {
-      const res = await axios.post("/api/auth/sign-in", {
-        email: "cool@gmail.com",
-        password: "123456",
-      });
-      console.log(res.data);
-    };
-    testAuth();
-  }, []);
-
-  return <div>Home Page</div>;
+  return (
+    <div>
+      <Routes>
+        <Route element={<SignIn />} path="/sign-in" />
+        <Route element={<SignUp />} path="/sign-up" />
+      </Routes>
+    </div>
+  );
 };
 
 export default App;
