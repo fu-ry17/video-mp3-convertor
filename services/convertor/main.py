@@ -21,3 +21,7 @@ app = FastAPI(
     description="Convertor service",
     lifespan=life_span
 )
+
+@app.get("/health")
+async def health():
+    return { "status": "ok" }

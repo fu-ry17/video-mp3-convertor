@@ -1,0 +1,36 @@
+name: Keep Services Alive
+
+on:
+  schedule:
+    - cron: "*/1 * * * *" # runs every 1 minute
+  workflow_dispatch: # allows manual trigger
+
+jobs:
+  ping-services:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping all services every 30 seconds
+        run: |
+          # List of service URLs
+          URLS=(
+            "https://mp3-media.onrender.com/health"
+            "https://mp3-notification.onrender.com/health"
+            "https://mp3-convertor.onrender.com/health"
+            "https://mp3-gateway.onrender.com/health"
+            "https://mp3-auth.onrender.com/health"
+          )
+
+          # Function to ping all services
+          ping_services() {
+            for URL in "${URLS[@]}"; do
+              echo "Pinging $URL"
+              curl -s "$URL" >/dev/null
+            done
+          }
+
+          # Ping immediately
+          ping_services
+
+          # Wait 30s and ping again
+          sleep 30
+          ping_services
