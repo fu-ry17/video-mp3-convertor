@@ -61,7 +61,7 @@ jobs:
     steps:
       - name: Trigger Render Deploys
         run: |
-          echo "${{ secrets.RENDER_SERVICE_IDS }}" > services.json
+          echo '${{ secrets.RENDER_SERVICE_IDS }}' > services.json
           for service in $(jq -r 'keys[]' services.json); do
             SERVICE_ID=$(jq -r ".\"$service\"" services.json)
             echo "Triggering deploy for $service -> $SERVICE_ID"
