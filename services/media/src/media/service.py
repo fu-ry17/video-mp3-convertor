@@ -71,7 +71,7 @@ class MediaService:
     async def get_user_media(self, user_id: str):
         try:
             media = media_client.find({'user_id': user_id})
-            return media
+            return list(media)
         except Exception as err:
             logging.error(f"Failed to get user media: {err}", exc_info=True)
             raise HTTPException(status_code=500, detail="internal server error")
