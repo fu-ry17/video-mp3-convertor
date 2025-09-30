@@ -48,7 +48,7 @@ class AuthService:
                 # generate tokens
                 user_data = { 'user_id': str(user.id), 'email': user.email }
                 access_token = utils.generate_token(user_data, exp=timedelta(hours=1))
-                refresh_token = utils.generate_token(user_data, exp=timedelta(days=2))
+                refresh_token = utils.generate_token(user_data, exp=timedelta(days=2), refresh=True)
 
                 return JSONResponse(
                     content={

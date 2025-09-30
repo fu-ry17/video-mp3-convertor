@@ -4,20 +4,20 @@ import SignUp from "./pages/sign-up";
 import { useAuth } from "./auth/auth-hook";
 
 const App = () => {
-  const { session } = useAuth();
-  const { data, isLoading, error } = session;
+  // const { session } = useAuth();
+  // const { data, isLoading, error } = session;
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
+  // if (isLoading) {
+  //   return <div>Loading...</div>;
+  // }
 
-  if (error) {
-    return <div>Error: {error.message}</div>;
-  }
+  // if (error) {
+  //   return <div>Error: {error.message}</div>;
+  // }
 
-  if (!data) {
-    return <div>No session data available</div>;
-  }
+  // if (!data) {
+  //   return <div>No session data available</div>;
+  // }
 
   return (
     <div className="w-full">

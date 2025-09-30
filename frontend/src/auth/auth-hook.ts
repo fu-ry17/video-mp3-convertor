@@ -60,7 +60,9 @@ export const useAuth = () => {
     queryKey: ["user"],
     queryFn: async () => {
       const refresh_token = sessionStorage.getItem("mp3_refresh_token");
-      const access_token = await axios.get(`/api/auth/refresh-token`);
+      const access_token = await axios.get(`/api/auth/refresh-token`, {
+        headers: { Authorization: `Bearer ${refresh_token}` },
+      });
 
       console.log({ refresh_token, access_token });
       return true;
