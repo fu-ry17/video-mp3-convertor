@@ -21,7 +21,6 @@ const App = () => {
 
   return (
     <div className="w-full">
-      {data}
       <Routes>
         <Route element={<SignIn />} path="/sign-in" />
         <Route element={<SignUp />} path="/sign-up" />

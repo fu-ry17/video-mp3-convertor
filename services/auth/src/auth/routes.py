@@ -24,6 +24,6 @@ async def register(data: RegisterSchema, session: AsyncSession = Depends(get_ses
 async def verify(token_data: dict = Depends(access_token_bearer)):
     return token_data
 
-@auth_router.post('/refresh-token')
+@auth_router.get('/refresh-token')
 async def refresh_token(token_data: dict = Depends(refresh_token_bearer)):
     return await auth_service.refresh_token(token_data)
