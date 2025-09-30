@@ -1,8 +1,11 @@
+import { AuthLayout } from "@/auth/components/auth-layout";
+import { SignUpForm } from "@/auth/components/sign-up-form";
+
 const SignUp = () => {
   return (
-    <div>
-      <h1> Sign Up </h1>
-    </div>
+    <AuthLayout>
+      <SignUpForm />
+    </AuthLayout>
   );
 };
 

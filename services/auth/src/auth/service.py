@@ -52,9 +52,16 @@ class AuthService:
 
                 return JSONResponse(
                     content={
-                        'access-token': access_token,
-                        'refresh-token': refresh_token
+                        'access_token': access_token,
+                        'refresh_token': refresh_token
                     }
                 )
 
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials")
+    
+    async def refresh_token(self, token_data: dict):
+        user_data = { 'user_id': str(token_data.user_id), 'email': token_data.email }
+        access_token = utils.generate_token(user_data, exp=timedelta(hours=1))
+        return JSONResponse(
+            content={ 'access_token': access_token }
+        )
