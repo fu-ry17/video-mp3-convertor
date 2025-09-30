@@ -67,10 +67,12 @@ async def proxy(service: str, path: str, request: Request):
 
 async def _proxy(request: Request, base: str, path: str):
     url = f"{base}/{path}" if path else base
-    print(url)
+    print(f"Proxying {request.method} {url}")
+    
     body = await request.body()
-    content_type = request.headers.get("content-type")
-
+    headers = dict(request.headers)
+    headers.pop("host", None)
+    
     try:
        async with httpx.AsyncClient(follow_redirects=False) as client:
            resp = await client.request(
@@ -78,7 +80,7 @@ async def _proxy(request: Request, base: str, path: str):
                url,
                params=request.query_params,
                content=body,
-               headers= {"content-type": content_type} if content_type else None
+               headers=headers
            )
     except httpx.RequestError as exc:
         raise HTTPException(status_code=502, detail=f"Upstream error: {exc}") from exc

@@ -16,11 +16,11 @@ export const useAuth = () => {
     },
     onSuccess: (data) => {
       toast.success("Logged in successfully!");
-      sessionStorage.setItem("mp3_refresh_token", data.refresh_token);
+      localStorage.setItem("mp3_refresh_token", data.refresh_token);
       navigate("/");
     },
     onError: (error) => {
-      sessionStorage.removeItem("refresh_token");
+      localStorage.removeItem("mp3_refresh_token");
       handleError(error);
     },
   });
@@ -44,7 +44,7 @@ export const useAuth = () => {
 
   const logout = useMutation({
     mutationFn: async () => {
-      sessionStorage.removeItem("mp3_refresh_token");
+      localStorage.removeItem("mp3_refresh_token");
       navigate("/sign-in");
       return true;
     },
@@ -59,14 +59,25 @@ export const useAuth = () => {
   const session = useQuery({
     queryKey: ["user"],
     queryFn: async () => {
-      const refresh_token = sessionStorage.getItem("mp3_refresh_token");
-      const access_token = await axios.get(`/api/auth/refresh-token`, {
-        headers: { Authorization: `Bearer ${refresh_token}` },
-      });
+      const refresh_token = localStorage.getItem("mp3_refresh_token");
+      if (!refresh_token) return null;
 
-      console.log({ refresh_token, access_token });
-      return true;
+      try {
+        const response = await axios.get(`/api/auth/refresh-token`, {
+          headers: { Authorization: `Bearer ${refresh_token}` },
+        });
+        console.log({ refresh_token, response });
+        return response.data;
+      } catch (error) {
+        console.error("Failed to refresh token:", error);
+        localStorage.removeItem("mp3_refresh_token");
+        throw error;
+      }
     },
+    enabled: !!localStorage.getItem("mp3_refresh_token"),
+    retry: false,
+    staleTime: 5 * 60 * 1000,
+    refetchOnWindowFocus: false,
   });
 
   return { signIn, signUp, logout, session };
