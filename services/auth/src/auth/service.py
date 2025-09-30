@@ -63,5 +63,9 @@ class AuthService:
         user_data = { 'user_id': str(token_data.user_id), 'email': token_data.email }
         access_token = utils.generate_token(user_data, exp=timedelta(hours=1))
         return JSONResponse(
-            content={ 'access_token': access_token }
+            content={ 
+                'access_token': access_token,
+                'id': token_data.user_id,
+                'email': token_data.email
+            }
         )

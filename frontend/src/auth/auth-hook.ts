@@ -1,4 +1,4 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import type z from "zod";
 import type { loginSchema, registerSchema } from "./schema";
 import { handleError } from "@/lib/handle-error";
@@ -15,12 +15,12 @@ export const useAuth = () => {
       return res.data;
     },
     onSuccess: (data) => {
-      console.log({ data });
       toast.success("Logged in successfully!");
-      sessionStorage.setItem("refresh_token", data.refresh_token);
+      sessionStorage.setItem("mp3_refresh_token", data.refresh_token);
       navigate("/");
     },
     onError: (error) => {
+      sessionStorage.removeItem("refresh_token");
       handleError(error);
     },
   });
@@ -39,6 +39,14 @@ export const useAuth = () => {
     },
     onError: (error) => {
       handleError(error);
+    },
+  });
+
+  const session = useQuery({
+    queryKey: ["user"],
+    queryFn: async () => {
+      const refresh_token = sessionStorage.getItem("mp3_refresh_token");
+      const access_token = await axios.get(`/api/auth/refresh-token`);
     },
   });
 
