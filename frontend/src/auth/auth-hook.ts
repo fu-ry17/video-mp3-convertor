@@ -42,13 +42,30 @@ export const useAuth = () => {
     },
   });
 
+  const logout = useMutation({
+    mutationFn: async () => {
+      sessionStorage.removeItem("mp3_refresh_token");
+      navigate("/sign-in");
+      return true;
+    },
+    onSuccess: () => {
+      toast.success("Logged out successfully!");
+    },
+    onError: (error) => {
+      handleError(error);
+    },
+  });
+
   const session = useQuery({
     queryKey: ["user"],
     queryFn: async () => {
       const refresh_token = sessionStorage.getItem("mp3_refresh_token");
       const access_token = await axios.get(`/api/auth/refresh-token`);
+
+      console.log({ refresh_token, access_token });
+      return true;
     },
   });
 
-  return { signIn, signUp };
+  return { signIn, signUp, logout, session };
 };
